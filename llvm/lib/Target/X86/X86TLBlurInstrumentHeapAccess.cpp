@@ -144,20 +144,6 @@ TLBlurInstrumentHeap::getAddressMode(MachineInstr &MI) {
           errs() << "HACK: Skipping Thread Local Storage instrumentation!\n");
       return std::nullopt;
     }
-
-    for (auto Op : MI.explicit_operands()) {
-      if (Op.isReg() && Op.getReg().isVirtual()) {
-        const auto *RegClass = MRI->getRegClass(Op.getReg());
-        if (!RegClass)
-          continue;
-        auto ID = RegClass->getID();
-        if (ID == X86::VR256RegClassID || ID == X86::VR256XRegClassID ||
-            ID == X86::VR512RegClassID || ID == X86::VR512_0_15RegClassID) {
-          LLVM_DEBUG(errs() << "HACK: Skipping VR register instrumentation!\n");
-          return std::nullopt;
-        }
-      }
-    }
   }
 
   std::optional<X86AddressMode> AM = getAddressFromInstr(MI);
